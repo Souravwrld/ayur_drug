@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     const Expanded(
                       child: Text(
-                        'AyurDrug Directory',
+                        'Mediayush Directory',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,

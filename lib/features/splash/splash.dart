@@ -1,5 +1,10 @@
+import 'dart:async';
+
+import 'package:ayur_drug/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:ayur_drug/features/auth/presentation/screens/login_screen.dart';
 import 'package:ayur_drug/features/home/screens/main_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -10,6 +15,7 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  Timer? _navigationTimer;
 
   @override
   void initState() {
@@ -21,15 +27,28 @@ class _SplashScreenState extends State<SplashScreen>
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
 
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => MainWrapper()),
-      );
+    // Use Timer instead of Future.delayed for better control
+    _navigationTimer = Timer(const Duration(seconds: 3), () {
+      // Check if widget is still mounted before using context
+      if (mounted) {
+        final authState = context.read<AuthBloc>().state;
+        if (authState is AuthSuccess) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => MainWrapper()),
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
+        }
+      }
     });
   }
 
   @override
   void dispose() {
+    // Cancel the timer to prevent navigation after disposal
+    _navigationTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -74,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 32),
                 const Text(
-                  'AyurDrug',
+                  'Mediayush',
                   style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.w700,

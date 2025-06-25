@@ -1,5 +1,8 @@
+import 'package:ayur_drug/features/auth/domain/auth_repo.dart';
+import 'package:ayur_drug/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ayur_drug/features/home/app_data_bloc/app_data_bloc.dart';
 import 'package:ayur_drug/features/home/navigation_bloc/navigation_bloc.dart';
+import 'package:ayur_drug/features/home/screens/main_wrapper.dart';
 import 'package:ayur_drug/features/splash/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,9 +19,10 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => NavigationBloc()),
         BlocProvider(create: (context) => AppDataBloc()..add(LoadAppData())),
+        BlocProvider(create: (context) => AuthBloc(AuthRepository())..add(CheckAuthStatus())),
       ],
       child: MaterialApp(
-        title: 'AyurDrug Directory',
+        title: 'Mediayush Directory',
         theme: ThemeData(
           primarySwatch: Colors.orange,
           primaryColor: const Color(0xFFFF6B35),
@@ -26,7 +30,15 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: const Color(0xFFf0f2f5),
           useMaterial3: true,
         ),
-        home: SplashScreen(),
+        home: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is AuthSuccess) {
+              return MainWrapper();
+            } else {
+              return SplashScreen();
+            }
+          },
+        ),
         debugShowCheckedModeBanner: false,
       ),
     );
