@@ -12,7 +12,6 @@ class MainWrapper extends StatelessWidget {
     HomeScreen(),
     SearchScreen(),
     SavedScreen(),
-    ToolsScreen(),
     SettingsScreen(),
   ];
 
@@ -46,8 +45,7 @@ class MainWrapper extends StatelessWidget {
                     _buildNavItem(context, 0, '🏠', 'Home', currentIndex),
                     _buildNavItem(context, 1, '🔍', 'Search', currentIndex),
                     _buildNavItem(context, 2, '⭐', 'Saved', currentIndex),
-                    _buildNavItem(context, 3, '🛠️', 'Tools', currentIndex),
-                    _buildNavItem(context, 4, '⚙️', 'More', currentIndex),
+                    _buildNavItem(context, 3, '⚙️', 'More', currentIndex),
                   ],
                 ),
               ),
