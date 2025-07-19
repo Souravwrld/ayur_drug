@@ -1,4 +1,5 @@
 import 'package:ayur_drug/features/home/app_data_bloc/app_data_bloc.dart';
+import 'package:ayur_drug/features/home/navigation_bloc/navigation_bloc.dart';
 import 'package:ayur_drug/features/home/widgets/home_category_card.dart';
 import 'package:ayur_drug/features/home/widgets/stat.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,11 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Icon(Icons.search, color: Colors.white),
+                    GestureDetector(
+                        onTap: () {
+                          context.read<NavigationBloc>().add(NavigateToTab(1));
+                        },
+                        child: const Icon(Icons.search, color: Colors.white)),
                     const SizedBox(width: 16),
                     const Icon(Icons.notifications, color: Colors.white),
                   ],
@@ -55,33 +60,38 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Search Bar
-                    Container(
-                      margin: const EdgeInsets.all(16),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFf5f6f7),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.search, color: Colors.grey),
-                          const SizedBox(width: 12),
-                          const Expanded(
-                            child: Text(
-                              'Quick search for drugs...',
-                              style: TextStyle(color: Colors.grey),
+                    GestureDetector(
+                      onTap: () {
+                        context.read<NavigationBloc>().add(NavigateToTab(1));
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFf5f6f7),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
                             ),
-                          ),
-                          const Icon(Icons.mic, color: Colors.grey),
-                        ],
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.search, color: Colors.grey),
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: Text(
+                                'Quick search for drugs...',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                            const Icon(Icons.mic, color: Colors.grey),
+                          ],
+                        ),
                       ),
                     ),
 

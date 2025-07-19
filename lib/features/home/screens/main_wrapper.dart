@@ -1,7 +1,7 @@
 import 'package:ayur_drug/features/home/navigation_bloc/navigation_bloc.dart';
 import 'package:ayur_drug/features/home/screens/home_screen.dart';
 import 'package:ayur_drug/features/saved/screens/save.dart';
-import 'package:ayur_drug/features/search/screens/search.dart';
+import 'package:ayur_drug/features/search/presentation/screens/search.dart';
 import 'package:ayur_drug/features/settings/screens/settings.dart';
 import 'package:ayur_drug/features/tools/screens/tools.dart';
 import 'package:flutter/material.dart';
