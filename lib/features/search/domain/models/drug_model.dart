@@ -1,4 +1,6 @@
 // models/drug.dart
+import 'package:ayur_drug/features/search/domain/models/morphology_model.dart';
+
 class Drug {
   final String id;
   final String name;
@@ -72,30 +74,6 @@ class Drug {
   }
 }
 
-class Morphology {
-  final String macroscopic;
-  final String microscopic;
-
-  Morphology({
-    required this.macroscopic,
-    required this.microscopic,
-  });
-
-  factory Morphology.fromJson(Map<String, dynamic> json) {
-    return Morphology(
-      macroscopic: json['macroscopic'] ?? '',
-      microscopic: json['microscopic'] ?? '',
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'macroscopic': macroscopic,
-      'microscopic': microscopic,
-    };
-  }
-}
-
 class QualityStandards {
   final String foreignMatter;
   final String totalAsh;
@@ -153,12 +131,26 @@ class Properties {
 
   factory Properties.fromJson(Map<String, dynamic> json) {
     return Properties(
-      rasa: List<String>.from(json['rasa'] ?? []),
+      // Handle both single string and list of strings for rasa
+      rasa: _parseStringOrList(json['rasa']),
       guna: List<String>.from(json['guna'] ?? []),
       virya: json['virya'] ?? '',
       vipaka: json['vipaka'] ?? '',
       karma: List<String>.from(json['karma'] ?? []),
     );
+  }
+
+  // Helper method to handle both string and list cases
+  static List<String> _parseStringOrList(dynamic value) {
+    if (value == null) {
+      return [];
+    } else if (value is String) {
+      return [value];
+    } else if (value is List) {
+      return List<String>.from(value);
+    } else {
+      return [];
+    }
   }
 
   Map<String, dynamic> toJson() {

@@ -1,4 +1,5 @@
 import 'package:ayur_drug/features/search/domain/models/drug_model.dart';
+import 'package:ayur_drug/features/search/domain/models/morphology_model.dart';
 import 'package:flutter/material.dart';
 
 class DrugDetailScreen extends StatelessWidget {
@@ -215,19 +216,7 @@ class DrugDetailScreen extends StatelessWidget {
                     ),
 
                   // Morphology
-                  _buildSection(
-                    title: 'Morphology',
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildMorphologyItem(
-                            'Macroscopic', drug.morphology.macroscopic),
-                        const SizedBox(height: 12),
-                        _buildMorphologyItem(
-                            'Microscopic', drug.morphology.microscopic),
-                      ],
-                    ),
-                  ),
+                  _buildMorphologySection(drug),
 
                   // Formulations
                   if (drug.formulations.isNotEmpty)
@@ -413,31 +402,6 @@ class DrugDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMorphologyItem(String title, String description) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFFFF6B35),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          description,
-          style: const TextStyle(
-            fontSize: 13,
-            color: Colors.black87,
-            height: 1.4,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildQualityStandard(String parameter, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -463,6 +427,118 @@ class DrugDetailScreen extends StatelessWidget {
                 fontSize: 13,
                 color: Colors.black87,
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMorphologySection(Drug drug) {
+    final macroscopicSections = drug.morphology.getMacroscopicSections();
+    final microscopicSections = drug.morphology.getMicroscopicSections();
+
+    if (macroscopicSections.isEmpty && microscopicSections.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return _buildSection(
+      title: 'Morphology',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Macroscopic Section
+          if (macroscopicSections.isNotEmpty) ...[
+            _buildMorphologySubSection('Macroscopic', macroscopicSections),
+            if (microscopicSections.isNotEmpty) const SizedBox(height: 20),
+          ],
+
+          // Microscopic Section
+          if (microscopicSections.isNotEmpty) ...[
+            _buildMorphologySubSection('Microscopic', microscopicSections),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMorphologySubSection(
+      String mainTitle, List<MorphologySection> sections) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          mainTitle,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFFFF6B35),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...sections
+            .map((section) => _buildMorphologyItem(
+                  section.title,
+                  section.content,
+                  isNested: section.isNested,
+                ))
+            .toList(),
+      ],
+    );
+  }
+
+  Widget _buildMorphologyItem(String title, String description,
+      {bool isNested = false}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isNested ? Colors.grey.withOpacity(0.05) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isNested
+              ? const Color(0xFFFF6B35).withOpacity(0.2)
+              : Colors.grey.withOpacity(0.1),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title.isNotEmpty) ...[
+            Row(
+              children: [
+                if (isNested) ...[
+                  Container(
+                    width: 4,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF6B35),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: isNested ? 15 : 14,
+                      fontWeight: FontWeight.w600,
+                      color:
+                          isNested ? const Color(0xFFFF6B35) : Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+          ],
+          Text(
+            description,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Colors.black87,
+              height: 1.5,
             ),
           ),
         ],
