@@ -6,7 +6,6 @@ import 'package:ayur_drug/drug_data/drug_data.dart';
 import 'package:ayur_drug/features/search/domain/models/drug_model.dart';
 import 'package:http/http.dart' as http;
 
-
 class DrugRepository {
   // API endpoints for all 7 volumes
   static const List<String> apiEndpoints = [
@@ -23,7 +22,8 @@ class DrugRepository {
   static List<Drug>? _cachedDrugs;
   static bool _isLoading = false;
   static DateTime? _lastFetchTime;
-  static const Duration _cacheExpiration = Duration(hours: 24); // Cache for 24 hours
+  static const Duration _cacheExpiration =
+      Duration(hours: 24); // Cache for 24 hours
 
   /// Fetches all drugs from all volumes with proper error handling and caching
   Future<List<Drug>> _getAllDrugsFromAPI() async {
@@ -44,7 +44,7 @@ class DrugRepository {
     }
 
     _isLoading = true;
-    
+
     try {
       List<Drug> allDrugs = [];
       List<Future<http.Response>> futures = [];
@@ -58,7 +58,8 @@ class DrugRepository {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
             },
-          ).timeout(const Duration(seconds: 30)), // 30-second timeout per request
+          ).timeout(
+              const Duration(seconds: 30)), // 30-second timeout per request
         );
       }
 
@@ -68,41 +69,48 @@ class DrugRepository {
       // Process responses
       for (int i = 0; i < responses.length; i++) {
         final response = responses[i];
-        
+
         if (response.statusCode == 200) {
           try {
             final dynamic responseData = json.decode(response.body);
             List<dynamic> volumeData;
-            
+
             // Handle different response structures
             if (responseData is List) {
               volumeData = responseData;
-            } else if (responseData is Map && responseData.containsKey('data')) {
+            } else if (responseData is Map &&
+                responseData.containsKey('data')) {
               volumeData = responseData['data'];
-            } else if (responseData is Map && responseData.containsKey('products')) {
+            } else if (responseData is Map &&
+                responseData.containsKey('products')) {
               volumeData = responseData['products'];
-            } else if (responseData is Map && responseData.containsKey('items')) {
+            } else if (responseData is Map &&
+                responseData.containsKey('items')) {
               volumeData = responseData['items'];
             } else {
-              print('Unexpected response structure from volume ${i + 1}: ${responseData.runtimeType}');
+              print(
+                  'Unexpected response structure from volume ${i + 1}: ${responseData.runtimeType}');
               continue;
             }
 
             final List<Drug> volumeDrugs = [];
-            
+
             for (var drugData in volumeData) {
               try {
                 final drug = Drug.fromJson(drugData);
                 volumeDrugs.add(drug);
               } catch (parseError) {
-                print('Error parsing individual drug in volume ${i + 1}: $parseError');
-                print('Problematic data: ${drugData.toString().substring(0, 200)}...');
+                print(
+                    'Error parsing individual drug in volume ${i + 1}: $parseError');
+                print(
+                    'Problematic data: ${drugData.toString().substring(0, 200)}...');
                 // Continue with other drugs even if one fails
               }
             }
-            
+
             allDrugs.addAll(volumeDrugs);
-            print('Successfully loaded ${volumeDrugs.length} drugs from volume ${i + 1}');
+            print(
+                'Successfully loaded ${volumeDrugs.length} drugs from volume ${i + 1}');
           } catch (e) {
             print('Error parsing data from volume ${i + 1}: $e');
             // Continue with other volumes even if one fails
@@ -116,18 +124,17 @@ class DrugRepository {
       // Cache the results
       _cachedDrugs = allDrugs;
       _lastFetchTime = DateTime.now();
-      
+
       print('Total drugs loaded: ${allDrugs.length}');
       return allDrugs;
-
     } catch (e) {
       print('Error fetching drugs from API: $e');
-      
+
       // Fallback to dummy data if API fails completely
       if (_cachedDrugs == null) {
         return _getFallbackDrugs();
       }
-      
+
       return _cachedDrugs!;
     } finally {
       _isLoading = false;
@@ -155,7 +162,7 @@ class DrugRepository {
       }
 
       final searchTerm = query.toLowerCase().trim();
-      
+
       // Use more efficient filtering for large datasets
       return allDrugs.where((drug) {
         // Quick check for exact matches first (most efficient)
@@ -185,7 +192,6 @@ class DrugRepository {
 
         return false;
       }).toList();
-
     } catch (e) {
       throw Exception('Failed to search drugs: $e');
     }
@@ -195,7 +201,7 @@ class DrugRepository {
   Future<Drug?> getDrugById(String id) async {
     try {
       final List<Drug> allDrugs = await _getAllDrugsFromAPI();
-      
+
       // Use firstWhere with orElse for better performance
       try {
         return allDrugs.firstWhere(
@@ -231,7 +237,7 @@ class DrugRepository {
       'drugCount': _cachedDrugs?.length ?? 0,
       'lastFetchTime': _lastFetchTime?.toIso8601String(),
       'isLoading': _isLoading,
-      'cacheExpired': _lastFetchTime != null 
+      'cacheExpired': _lastFetchTime != null
           ? DateTime.now().difference(_lastFetchTime!) > _cacheExpiration
           : true,
     };
