@@ -15,16 +15,35 @@ class Properties {
 
   factory Properties.fromJson(Map<String, dynamic> json) {
     return Properties(
-      // Handle both single string and list of strings for rasa
       rasa: _parseStringOrList(json['rasa']),
-      guna: List<String>.from(json['guna'] ?? []),
-      virya: json['virya'] ?? '',
-      vipaka: json['vipaka'] ?? '',
-      karma: List<String>.from(json['karma'] ?? []),
+      guna: _parseStringOrList(
+          json['guna'] ?? json['guṇa']), // Handle both spellings
+      virya:
+          _parseVirya(json['virya'] ?? json['vīrya']), // Enhanced virya parsing
+      vipaka: json['vipaka'] ?? json['vipāka'] ?? '', // Handle both spellings
+      karma: _parseStringOrList(json['karma']),
     );
   }
 
-  // Helper method to handle both string and list cases
+  // Enhanced virya parser to handle both string and array
+  static String _parseVirya(dynamic value) {
+    if (value == null) {
+      return '';
+    } else if (value is String) {
+      return value;
+    } else if (value is List && value.isNotEmpty) {
+      // If it's an array, take the first value or join them
+      if (value.length == 1) {
+        return value[0].toString();
+      } else {
+        // Join multiple values with " / " to show alternatives
+        return value.map((v) => v.toString()).join(' / ');
+      }
+    } else {
+      return value.toString();
+    }
+  }
+
   static List<String> _parseStringOrList(dynamic value) {
     if (value == null) {
       return [];

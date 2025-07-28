@@ -1,5 +1,7 @@
 import 'package:ayur_drug/features/search/domain/models/drug_model.dart';
 import 'package:ayur_drug/features/search/domain/models/morphology_model.dart';
+import 'package:ayur_drug/features/search/domain/models/properties_model.dart';
+import 'package:ayur_drug/features/search/domain/models/quality_standards_model.dart';
 import 'package:flutter/material.dart';
 
 class DrugDetailScreen extends StatelessWidget {
@@ -103,220 +105,105 @@ class DrugDetailScreen extends StatelessWidget {
                       ),
                     ),
 
-                  // Broad Classification
-                  if (drug.broadClassification != null)
+                  // Ayurvedic Properties
+                  if (_hasAyurvedicProperties(drug.properties))
                     _buildSection(
-                      title: 'Classification',
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.purple.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.purple.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.category,
-                              color: Colors.purple,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                drug.broadClassification!,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.purple,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                  // Origin and Occurrence
-                  if (drug.originAndOccurrence != null)
-                    _buildOriginAndOccurrenceSection(drug.originAndOccurrence!),
-
-                  // Physical Properties
-                  if (drug.physicalProperties != null)
-                    _buildPhysicalPropertiesSection(drug.physicalProperties!),
-
-                  // Optical Properties
-                  if (drug.opticalProperties != null)
-                    _buildOpticalPropertiesSection(drug.opticalProperties!),
-
-                  // Chemical Properties
-                  if (drug.chemicalProperties != null)
-                    _buildChemicalPropertiesSection(drug.chemicalProperties!),
-
-                  // Properties (Original Ayurvedic Properties)
-                  _buildSection(
-                    title: 'Ayurvedic Properties',
-                    child: Column(
-                      children: [
-                        _buildPropertyRow(
-                            'Rasa', drug.properties.rasa.join(', ')),
-                        _buildPropertyRow(
-                            'Guna', drug.properties.guna.join(', ')),
-                        _buildPropertyRow('Virya', drug.properties.virya),
-                        _buildPropertyRow('Vipaka', drug.properties.vipaka),
-                        _buildPropertyRow(
-                            'Karma', drug.properties.karma.join(', ')),
-                      ],
-                    ),
-                  ),
-
-                  // Attributes (Alternative Ayurvedic Properties)
-                  if (drug.attributes?.propertiesAndActions != null)
-                    _buildAttributesSection(drug.attributes!),
-
-                  // Shodhana
-                  if (drug.shodhana != null)
-                    _buildShodhanaSection(drug.shodhana!),
-
-                  // Diagnostic Property
-                  if (drug.diagnosticProperty != null)
-                    _buildSection(
-                      title: 'Diagnostic Property',
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.cyan.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.cyan.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.search,
-                              color: Colors.cyan,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                drug.diagnosticProperty!,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.cyan,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                  // Therapeutic Uses
-                  _buildSection(
-                    title: 'Therapeutic Uses',
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: drug.therapeuticUses
-                          .map((use) => Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color(0xFFFF6B35).withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: const Color(0xFFFF6B35)
-                                        .withOpacity(0.3),
-                                  ),
-                                ),
-                                child: Text(
-                                  use,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFFFF6B35),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ))
-                          .toList(),
-                    ),
-                  ),
-
-                  // Dosage (using both dosage and dose fields)
-                  _buildSection(
-                    title: 'Dosage',
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.blue.withOpacity(0.3),
-                        ),
-                      ),
-                      child: Row(
+                      title: 'Ayurvedic Properties',
+                      child: Column(
                         children: [
-                          const Icon(
-                            Icons.info_outline,
-                            color: Colors.blue,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              drug.dose ?? drug.dosage,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
+                          if (drug.properties.rasa.isNotEmpty)
+                            _buildPropertyRow(
+                                'Rasa', drug.properties.rasa.join(', ')),
+                          if (drug.properties.guna.isNotEmpty)
+                            _buildPropertyRow(
+                                'Guna', drug.properties.guna.join(', ')),
+                          if (drug.properties.virya.isNotEmpty)
+                            _buildPropertyRow('Virya', drug.properties.virya),
+                          if (drug.properties.vipaka.isNotEmpty)
+                            _buildPropertyRow('Vipaka', drug.properties.vipaka),
+                          if (drug.properties.karma.isNotEmpty)
+                            _buildPropertyRow(
+                                'Karma', drug.properties.karma.join(', ')),
                         ],
                       ),
                     ),
-                  ),
 
-                  // Important Formulations
-                  if (drug.importantFormulations != null &&
-                      drug.importantFormulations!.isNotEmpty)
+                  // Physical Properties
+                  if (drug.physicalProperties?.hasData == true)
+                    _buildPhysicalPropertiesSection(drug.physicalProperties!),
+
+                  // Shodhana (Purification Process)
+                  if (drug.shodhana != null)
+                    _buildShodhanaSection(drug.shodhana!),
+
+                  // Therapeutic Uses
+                  if (drug.therapeuticUses.isNotEmpty)
                     _buildSection(
-                      title: 'Important Formulations',
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: drug.importantFormulations!
-                            .map((formulation) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.star,
-                                        size: 16,
-                                        color: Color(0xFFFF6B35),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          formulation,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                      title: 'Therapeutic Uses',
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: drug.therapeuticUses
+                            .map((use) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFF6B35)
+                                        .withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: const Color(0xFFFF6B35)
+                                          .withOpacity(0.3),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    use,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFFFF6B35),
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ))
                             .toList(),
+                      ),
+                    ),
+
+                  // Dosage
+                  if (drug.dosage.isNotEmpty)
+                    _buildSection(
+                      title: 'Dosage',
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.blue.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.info_outline,
+                              color: Colors.blue,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                drug.dosage,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
@@ -428,63 +315,7 @@ class DrugDetailScreen extends StatelessWidget {
                     ),
 
                   // Quality Standards
-                  _buildSection(
-                    title: 'Quality Standards',
-                    child: Column(
-                      children: [
-                        _buildQualityStandard('Foreign Matter',
-                            drug.qualityStandards.foreignMatter),
-                        _buildQualityStandard(
-                            'Total Ash', drug.qualityStandards.totalAsh),
-                        _buildQualityStandard('Acid Insoluble Ash',
-                            drug.qualityStandards.acidInsolublAsh),
-                        _buildQualityStandard('Alcohol Soluble Extractive',
-                            drug.qualityStandards.alcoholSolubleExtractive),
-                        _buildQualityStandard('Water Soluble Extractive',
-                            drug.qualityStandards.waterSolubleExtractive),
-                        if (drug.qualityStandards.volatileOil != null)
-                          _buildQualityStandard('Volatile Oil',
-                              drug.qualityStandards.volatileOil!),
-                      ],
-                    ),
-                  ),
-
-                  // Usage Note
-                  if (drug.usageNote != null && drug.usageNote!.isNotEmpty)
-                    _buildSection(
-                      title: 'Usage Note',
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.orange.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(
-                              Icons.lightbulb_outline,
-                              color: Colors.orange,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                drug.usageNote!,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                  height: 1.4,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  _buildQualityStandardsSection(drug.qualityStandards),
 
                   // Notes
                   if (drug.notes != null && drug.notes!.isNotEmpty)
@@ -533,6 +364,14 @@ class DrugDetailScreen extends StatelessWidget {
     );
   }
 
+  bool _hasAyurvedicProperties(Properties properties) {
+    return properties.rasa.isNotEmpty ||
+        properties.guna.isNotEmpty ||
+        properties.virya.isNotEmpty ||
+        properties.vipaka.isNotEmpty ||
+        properties.karma.isNotEmpty;
+  }
+
   Widget _buildSection({required String title, required Widget child}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
@@ -555,6 +394,8 @@ class DrugDetailScreen extends StatelessWidget {
   }
 
   Widget _buildPropertyRow(String label, String value) {
+    if (value.isEmpty) return const SizedBox.shrink();
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -585,6 +426,316 @@ class DrugDetailScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildPhysicalPropertiesSection(PhysicalProperties properties) {
+    return _buildSection(
+      title: 'Physical & Chemical Properties',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (properties.nature != null)
+            _buildPropertyRow('Nature', properties.nature!),
+          if (properties.colour != null)
+            _buildPropertyRow('Colour', properties.colour!),
+          if (properties.streak != null)
+            _buildPropertyRow('Streak', properties.streak!),
+          if (properties.cleavage != null)
+            _buildPropertyRow('Cleavage', properties.cleavage!),
+          if (properties.fracture != null)
+            _buildPropertyRow('Fracture', properties.fracture!),
+          if (properties.lustre != null)
+            _buildPropertyRow('Lustre', properties.lustre!),
+          if (properties.tenacity != null)
+            _buildPropertyRow('Tenacity', properties.tenacity!),
+          if (properties.transparency != null)
+            _buildPropertyRow('Transparency', properties.transparency!),
+          if (properties.hardness != null)
+            _buildPropertyRow('Hardness', properties.hardness!),
+          if (properties.specificGravity != null)
+            _buildPropertyRow('Specific Gravity', properties.specificGravity!),
+          if (properties.fluorescence != null)
+            _buildPropertyRow('Fluorescence', properties.fluorescence!),
+          if (properties.solubility != null)
+            _buildPropertyRow('Solubility', properties.solubility!),
+          if (properties.solubilityInAcid != null)
+            _buildPropertyRow(
+                'Solubility in Acid', properties.solubilityInAcid!),
+          if (properties.description != null)
+            _buildPropertyRow('Description', properties.description!),
+
+          // Effect of Heat
+          if (properties.effectOfHeat != null)
+            _buildComplexPropertySection(
+                'Effect of Heat', properties.effectOfHeat!),
+
+          // Refractive Index
+          if (properties.refractiveIndex != null)
+            _buildComplexPropertySection(
+                'Refractive Index', properties.refractiveIndex!),
+
+          // Assay
+          if (properties.assay != null)
+            _buildComplexPropertySection('Assay', properties.assay!),
+
+          // Heavy Metals and Arsenic
+          if (properties.heavyMetalsAndArsenic != null)
+            _buildComplexPropertySection(
+                'Heavy Metals & Arsenic', properties.heavyMetalsAndArsenic!),
+
+          // Other Elements
+          if (properties.otherElements != null)
+            _buildComplexPropertySection(
+                'Other Elements', properties.otherElements!),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildComplexPropertySection(String title, Map<String, dynamic> data) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.withOpacity(0.2)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFFFF6B35),
+              ),
+            ),
+            const SizedBox(height: 8),
+            ...data.entries
+                .map((entry) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 120,
+                            child: Text(
+                              '${_formatKey(entry.key)}:',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              entry.value.toString(),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ))
+                .toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatKey(String key) {
+    return key
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((word) =>
+            word.isEmpty ? '' : word[0].toUpperCase() + word.substring(1))
+        .join(' ');
+  }
+
+  Widget _buildShodhanaSection(Shodhana shodhana) {
+    return _buildSection(
+      title: 'Shodhana (Purification Process)',
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.purple.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.purple.withOpacity(0.2)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Requirement
+            if (shodhana.requirement.isNotEmpty) ...[
+              const Row(
+                children: [
+                  Icon(Icons.warning_amber, color: Colors.purple, size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    'Requirement',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.purple,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                shodhana.requirement,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black87,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+
+            // Reference
+            if (shodhana.reference != null) ...[
+              Text(
+                shodhana.reference!,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+
+            // Ingredients
+            if (shodhana.ingredients.isNotEmpty) ...[
+              const Text(
+                'Ingredients:',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.purple,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...shodhana.ingredients
+                  .map((ingredient) => Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.circle,
+                                size: 6, color: Colors.purple),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                '${ingredient.name} - ${ingredient.quantity}',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ))
+                  .toList(),
+              const SizedBox(height: 16),
+            ],
+
+            // Method
+            if (shodhana.method.isNotEmpty) ...[
+              const Text(
+                'Method:',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.purple,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                shodhana.method,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black87,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQualityStandardsSection(QualityStandards qualityStandards) {
+    // If it only has notes/description, show it differently
+    if (qualityStandards.hasNotesOnly) {
+      return _buildSection(
+        title: 'Quality Standards',
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.orange.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.orange.withOpacity(0.3)),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.info_outline, color: Colors.orange, size: 20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  qualityStandards.notes!,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // If it has standard data, show in table format
+    if (qualityStandards.hasStandardsData) {
+      return _buildSection(
+        title: 'Quality Standards',
+        child: Column(
+          children: [
+            if (qualityStandards.foreignMatter.isNotEmpty)
+              _buildQualityStandard(
+                  'Foreign Matter', qualityStandards.foreignMatter),
+            if (qualityStandards.totalAsh.isNotEmpty)
+              _buildQualityStandard('Total Ash', qualityStandards.totalAsh),
+            if (qualityStandards.acidInsolublAsh.isNotEmpty)
+              _buildQualityStandard(
+                  'Acid Insoluble Ash', qualityStandards.acidInsolublAsh),
+            if (qualityStandards.alcoholSolubleExtractive.isNotEmpty)
+              _buildQualityStandard('Alcohol Soluble Extractive',
+                  qualityStandards.alcoholSolubleExtractive),
+            if (qualityStandards.waterSolubleExtractive.isNotEmpty)
+              _buildQualityStandard('Water Soluble Extractive',
+                  qualityStandards.waterSolubleExtractive),
+            if (qualityStandards.volatileOil != null)
+              _buildQualityStandard(
+                  'Volatile Oil', qualityStandards.volatileOil!),
+          ],
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
   Widget _buildQualityStandard(String parameter, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -612,348 +763,6 @@ class DrugDetailScreen extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOriginAndOccurrenceSection(OriginAndOccurrence origin) {
-    return _buildSection(
-      title: 'Origin & Occurrence',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (origin.geologicalContext != null) ...[
-            _buildPropertyRow('Geological Context', origin.geologicalContext!),
-          ],
-          if (origin.indianDeposits != null) ...[
-            _buildPropertyRow('Indian Deposits', origin.indianDeposits!),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPhysicalPropertiesSection(PhysicalProperties physical) {
-    final properties = physical.getPropertyEntries();
-    if (properties.isEmpty) return const SizedBox.shrink();
-
-    return _buildSection(
-      title: 'Physical Properties',
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.indigo.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.indigo.withOpacity(0.2),
-          ),
-        ),
-        child: Column(
-          children: properties
-              .map(
-                  (property) => _buildPropertyRow(property.key, property.value))
-              .toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOpticalPropertiesSection(OpticalProperties optical) {
-    return _buildSection(
-      title: 'Optical Properties',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (optical.description != null) ...[
-            Text(
-              optical.description!,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 12),
-          ],
-          if (optical.refractiveIndex != null) ...[
-            Text(
-              'Refractive Index',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.teal,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.teal.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                children: [
-                  if (optical.refractiveIndex!.range != null)
-                    _buildPropertyRow('Range', optical.refractiveIndex!.range!),
-                  if (optical.refractiveIndex!.nAlpha != null)
-                    _buildPropertyRow('nα', optical.refractiveIndex!.nAlpha!),
-                  if (optical.refractiveIndex!.nBeta != null)
-                    _buildPropertyRow('nβ', optical.refractiveIndex!.nBeta!),
-                  if (optical.refractiveIndex!.nGamma != null)
-                    _buildPropertyRow('nγ', optical.refractiveIndex!.nGamma!),
-                  if (optical.refractiveIndex!.nOmega != null)
-                    _buildPropertyRow('nω', optical.refractiveIndex!.nOmega!),
-                  if (optical.refractiveIndex!.nEpsilon != null)
-                    _buildPropertyRow('nε', optical.refractiveIndex!.nEpsilon!),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChemicalPropertiesSection(ChemicalProperties chemical) {
-    return _buildSection(
-      title: 'Chemical Properties',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Effect of Heat
-          if (chemical.effectOfHeat != null) ...[
-            Text(
-              'Effect of Heat',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.red,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (chemical.effectOfHeat is String) ...[
-                    Text(
-                      chemical.effectOfHeat as String,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black87,
-                        height: 1.5,
-                      ),
-                    ),
-                  ] else if (chemical.getEffectOfHeatEntries() != null) ...[
-                    ...chemical
-                        .getEffectOfHeatEntries()!
-                        .map((entry) =>
-                            _buildPropertyRow(entry.key, entry.value))
-                        .toList(),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
-
-          // Solubility Properties
-          if (chemical.solubility != null) ...[
-            _buildPropertyRow('Solubility', chemical.solubility!),
-          ],
-          if (chemical.solubilityInAcid != null) ...[
-            _buildPropertyRow('Solubility in Acid', chemical.solubilityInAcid!),
-          ],
-          if (chemical.reactionWithAcids != null) ...[
-            _buildPropertyRow(
-                'Reaction with Acids', chemical.reactionWithAcids!),
-          ],
-
-          // Assay
-          if (chemical.assay != null) ...[
-            const SizedBox(height: 16),
-            Text(
-              'Assay',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.green,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                children: [
-                  if (chemical.assay!.silicaSio2 != null)
-                    _buildPropertyRow(
-                        'Silica (SiO₂)', chemical.assay!.silicaSio2!),
-                  if (chemical.assay!.ironContent != null)
-                    _buildPropertyRow(
-                        'Iron Content', chemical.assay!.ironContent!),
-                ],
-              ),
-            ),
-          ],
-
-          // Heavy Metals and Arsenic
-          if (chemical.heavyMetalsAndArsenic != null) ...[
-            const SizedBox(height: 16),
-            Text(
-              'Heavy Metals & Arsenic',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.orange,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                children: [
-                  if (chemical.heavyMetalsAndArsenic!.limits != null)
-                    _buildPropertyRow(
-                        'Limits', chemical.heavyMetalsAndArsenic!.limits!),
-                  ...chemical.heavyMetalsAndArsenic!
-                      .getMetalEntries()
-                      .map((entry) => _buildPropertyRow(entry.key, entry.value))
-                      .toList(),
-                ],
-              ),
-            ),
-          ],
-
-          // Other Elements
-          if (chemical.otherElements != null) ...[
-            const SizedBox(height: 16),
-            Text(
-              'Other Elements',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.purple,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                children: [
-                  if (chemical.otherElements!.limits != null)
-                    _buildPropertyRow(
-                        'Limits', chemical.otherElements!.limits!),
-                  ...chemical.otherElements!
-                      .getElementEntries()
-                      .map((entry) => _buildPropertyRow(entry.key, entry.value))
-                      .toList(),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShodhanaSection(Shodhana shodhana) {
-    return _buildSection(
-      title: 'Shodhana (Purification)',
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.pink.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.pink.withOpacity(0.2),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (shodhana.requirement != null) ...[
-              _buildPropertyRow('Requirement', shodhana.requirement!),
-            ],
-            if (shodhana.reference != null) ...[
-              _buildPropertyRow('Reference', shodhana.reference!),
-            ],
-            if (shodhana.ingredients != null &&
-                shodhana.ingredients!.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text(
-                'Ingredients',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.pink,
-                ),
-              ),
-              const SizedBox(height: 8),
-              ...shodhana.ingredients!
-                  .map((ingredient) =>
-                      _buildPropertyRow(ingredient.name, ingredient.quantity))
-                  .toList(),
-            ],
-            if (shodhana.method != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                'Method',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.pink,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                shodhana.method!,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                  height: 1.5,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAttributesSection(Attributes attributes) {
-    final props = attributes.propertiesAndActions;
-    if (props == null) return const SizedBox.shrink();
-
-    return _buildSection(
-      title: 'Alternative Ayurvedic Properties',
-      child: Column(
-        children: [
-          if (props.rasa != null && props.rasa!.isNotEmpty)
-            _buildPropertyRow('Rasa', props.rasa!.join(', ')),
-          if (props.guna != null && props.guna!.isNotEmpty)
-            _buildPropertyRow('Guna', props.guna!.join(', ')),
-          if (props.virya != null) _buildPropertyRow('Vīrya', props.virya!),
-          if (props.vipaka != null) _buildPropertyRow('Vipāka', props.vipaka!),
-          if (props.karma != null && props.karma!.isNotEmpty)
-            _buildPropertyRow('Karma', props.karma!.join(', ')),
         ],
       ),
     );
