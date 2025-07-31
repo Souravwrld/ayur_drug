@@ -29,3 +29,25 @@ class SearchError extends SearchState {
   @override
   List<Object> get props => [message];
 }
+
+class CategoryDrugsLoading extends SearchState {}
+
+class CategoryDrugsSuccess extends SearchState {
+  final List<Drug> drugs;
+  final String category;
+
+  const CategoryDrugsSuccess(this.drugs, this.category);
+
+  @override
+  List<Object> get props => [drugs, category];
+}
+
+class CategoryDrugsError extends SearchState {
+  final String message;
+  final String category;
+
+  const CategoryDrugsError(this.message, this.category);
+
+  @override
+  List<Object> get props => [message, category];
+}

@@ -26,3 +26,12 @@ class SearchSubmitted extends SearchEvent {
 }
 
 class SearchCleared extends SearchEvent {}
+
+class CategoryDrugsRequested extends SearchEvent {
+  final String category;
+
+  const CategoryDrugsRequested(this.category);
+
+  @override
+  List<Object> get props => [category];
+}

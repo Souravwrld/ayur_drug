@@ -16,6 +16,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<SearchQueryChanged>(_onSearchQueryChanged);
     on<SearchSubmitted>(_onSearchSubmitted);
     on<SearchCleared>(_onSearchCleared);
+    on<CategoryDrugsRequested>(_onCategoryDrugsRequested);
   }
 
   Future<void> _onSearchQueryChanged(
@@ -26,10 +27,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       emit(SearchInitial());
       return;
     }
-
-    // if (event.query.length < 2) {
-    //   return; // Don't search for queries less than 2 characters
-    // }
 
     emit(SearchLoading());
 
@@ -65,5 +62,19 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) {
     emit(SearchInitial());
+  }
+
+  Future<void> _onCategoryDrugsRequested(
+    CategoryDrugsRequested event,
+    Emitter<SearchState> emit,
+  ) async {
+    emit(CategoryDrugsLoading());
+
+    try {
+      final drugs = await _drugRepository.getDrugsByCategory(event.category);
+      emit(CategoryDrugsSuccess(drugs, event.category));
+    } catch (e) {
+      emit(CategoryDrugsError(e.toString(), event.category));
+    }
   }
 }

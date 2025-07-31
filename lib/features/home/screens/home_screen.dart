@@ -2,6 +2,7 @@ import 'package:ayur_drug/features/home/app_data_bloc/app_data_bloc.dart';
 import 'package:ayur_drug/features/home/navigation_bloc/navigation_bloc.dart';
 import 'package:ayur_drug/features/home/widgets/home_category_card.dart';
 import 'package:ayur_drug/features/home/widgets/stat.dart';
+import 'package:ayur_drug/features/search/presentation/screens/drug_listing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -157,8 +158,15 @@ class HomeScreen extends StatelessWidget {
                             title: 'Classical',
                             subtitle: 'Traditional formulations',
                             onTap: () {
-                              // Add navigation logic here
-                              print('Classical category tapped');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CategoryDrugListScreen(
+                                    category: 'classical',
+                                    categoryTitle: 'Classical Drugs',
+                                  ),
+                                ),
+                              );
                             },
                           ),
                           CategoryCard(
@@ -166,8 +174,15 @@ class HomeScreen extends StatelessWidget {
                             title: 'Single Herbs',
                             subtitle: 'Raw medicinal herbs',
                             onTap: () {
-                              // Add navigation logic here
-                              print('Single Herbs category tapped');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CategoryDrugListScreen(
+                                    category: 'single_herbs',
+                                    categoryTitle: 'Single Herbs',
+                                  ),
+                                ),
+                              );
                             },
                           ),
                           CategoryCard(
